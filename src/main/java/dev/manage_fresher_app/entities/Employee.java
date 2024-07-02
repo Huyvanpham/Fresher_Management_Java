@@ -3,6 +3,8 @@ package dev.manage_fresher_app.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Data
 @Getter
 @Setter
@@ -15,10 +17,11 @@ public class Employee {
     private Long id;
 
     private String name;
-    private String dateOfBirth;
-    private String sex;
+    private LocalDate dateOfBirth;
+    private Boolean sex;
     private String phoneNumber;
     private String email;
+    private String imageURL;
     private String status;
 
 }

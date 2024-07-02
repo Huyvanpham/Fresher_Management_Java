@@ -1,7 +1,6 @@
 package dev.manage_fresher_app.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Data
@@ -11,7 +10,16 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 public class Account {
+//    @Id
+//    private String email;
+//    private String password;
     @Id
-    private String email;
-    private String password;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+        private String email;
+        private String password;
+
+        @OneToOne(cascade = CascadeType.ALL)
+        @JoinColumn(name = "employee_id", referencedColumnName = "id")
+        private Employee employee;
 }
