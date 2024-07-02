@@ -1,0 +1,18 @@
+spring:
+    application:
+        name: Manage_Fresher_App
+    datasource:
+        url: jdbc:mysql://localhost:3306/managefresher
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                format_sql: true
+
+#    autoconfigure:
+#        exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
