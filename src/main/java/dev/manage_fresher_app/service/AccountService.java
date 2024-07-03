@@ -1,5 +1,6 @@
 package dev.manage_fresher_app.service;
 
+import dev.manage_fresher_app.DTO.Request.LoginRequest;
 import dev.manage_fresher_app.entities.Account;
 import dev.manage_fresher_app.entities.Employee;
 import dev.manage_fresher_app.repositories.AccountRepository;
@@ -12,24 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AccountService {
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    // register
-
-    //login
-    public Optional<Account> login(String email, String password) {
-        Optional<Account> account = accountRepository.findByEmail(email);
-        if(account.isPresent() && bCryptPasswordEncoder.matches(password, account.get().getPassword())){
-            return account;
-        }
-        return Optional.empty();
-    }
+public interface AccountService {
+    Account login(LoginRequest loginRequest);
 }
