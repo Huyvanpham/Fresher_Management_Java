@@ -11,6 +11,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "WorkingHistory")
 public class WorkingHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

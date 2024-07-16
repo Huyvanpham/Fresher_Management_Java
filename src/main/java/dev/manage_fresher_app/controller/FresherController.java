@@ -3,6 +3,7 @@ package dev.manage_fresher_app.controller;
 import dev.manage_fresher_app.DTO.Request.Fresher.ChangePasswordRequest;
 import dev.manage_fresher_app.entities.Fresher;
 import dev.manage_fresher_app.service.FresherService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -25,6 +26,7 @@ public class FresherController {
     }
 
     // show list Fresher
+    @GetMapping
     public List<Fresher> getAllFreshers() {
         return fresherService.getAllFreshers();
     }

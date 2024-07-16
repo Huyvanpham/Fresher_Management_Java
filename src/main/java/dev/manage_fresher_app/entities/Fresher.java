@@ -3,13 +3,13 @@ package dev.manage_fresher_app.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Fresher extends Employee {
+@Table
+public class Fresher extends Employee{
     private Double avgScore;
 
     @OneToOne(cascade = CascadeType.ALL)

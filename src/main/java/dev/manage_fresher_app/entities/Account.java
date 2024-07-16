@@ -9,17 +9,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "Account")
 public class Account {
-//    @Id
-//    private String email;
-//    private String password;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-        private String email;
-        private String password;
+    private String email;
+    private String password;
 
-        @OneToOne(cascade = CascadeType.ALL)
-        @JoinColumn(name = "employee_id", referencedColumnName = "id")
-        private Employee employee;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
 }

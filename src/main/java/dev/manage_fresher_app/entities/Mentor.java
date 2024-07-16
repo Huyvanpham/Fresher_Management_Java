@@ -1,14 +1,14 @@
 package dev.manage_fresher_app.entities;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
 
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Mentor extends Employee {
-
+@Table(name = "Mentor")
+public class Mentor extends Employee{
+    private String position;
 }
