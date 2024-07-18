@@ -24,7 +24,12 @@ public class Exercise {
     private String description;
     private String status;
 
+    private String file;
+
     @OneToMany(mappedBy = "exercise")
     private List<ExerciseResult> exerciseResults;
 
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

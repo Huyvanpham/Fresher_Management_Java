@@ -25,4 +25,7 @@ public class ExerciseResult {
     @ManyToOne
     @JoinColumn(name = "fresher_id")
     private Fresher fresher;
+
+    @ManyToOne
+    private WorkingHistory history;
 }

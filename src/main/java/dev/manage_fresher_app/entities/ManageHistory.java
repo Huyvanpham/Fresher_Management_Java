@@ -19,7 +19,7 @@ public class ManageHistory {
 
     private Date startTime;
     private Date endTime;
-    private String status;
+    private String position;
 
     @ManyToOne
     @JoinColumn(name = "center_id")

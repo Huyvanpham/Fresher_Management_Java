@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.Set;
 
 @Data
 @Getter
@@ -22,6 +23,9 @@ public class WorkingHistory {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @JoinColumn(name = "fresher_id")
+    private Fresher fresher;
+
+    @OneToMany(mappedBy = "history")
+    private Set<ExerciseResult> results;
 }
