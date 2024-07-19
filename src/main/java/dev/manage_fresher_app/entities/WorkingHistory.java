@@ -28,4 +28,8 @@ public class WorkingHistory {
 
     @OneToMany(mappedBy = "history")
     private Set<ExerciseResult> results;
+
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    private Center center;
 }

@@ -42,4 +42,12 @@ public class CenterController {
         centerService.deleteCenter(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/merge")
+    public ResponseEntity<Center> mergeCenters(@RequestParam Long centerId1, @RequestParam Long centerId2, @RequestBody Center newCenterInfo){
+        Center newCenter = centerService.mergeCenters(centerId1,centerId2,newCenterInfo);
+        return ResponseEntity.ok(newCenter);
+    }
+
+
 }

@@ -30,4 +30,5 @@ public class Center {
     @OneToMany(mappedBy = "center")
     private List<ManageHistory> managerHistories;
 
+
 }

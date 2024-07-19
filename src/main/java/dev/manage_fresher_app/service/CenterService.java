@@ -11,4 +11,6 @@ public interface CenterService {
     Center addCenter(Center center);
     Center updateCenter(Long id, Center centerDetails);
     void deleteCenter(Long id);
+
+    Center mergeCenters(Long centerId1,Long centerId2, Center newCenterInfo);
 }

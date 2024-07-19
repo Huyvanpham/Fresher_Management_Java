@@ -1,9 +1,12 @@
 package dev.manage_fresher_app.service.Impl;
 
 import dev.manage_fresher_app.entities.Center;
+import dev.manage_fresher_app.entities.WorkingHistory;
 import dev.manage_fresher_app.exceptions.ResourceNotFoundException;
 import dev.manage_fresher_app.repositories.CenterRepository;
+import dev.manage_fresher_app.repositories.WorkingHistoryRepository;
 import dev.manage_fresher_app.service.CenterService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,9 @@ public class CenterServiceImpl implements CenterService {
 
     @Autowired
     private CenterRepository centerRepository;
+
+    @Autowired
+    private WorkingHistoryRepository workingHistoryRepository;
 
     // hien thi danh sach cac trung tam
     @Override
@@ -51,5 +57,48 @@ public class CenterServiceImpl implements CenterService {
     public void deleteCenter(Long id) {
         Center center = centerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Center not found"));
         centerRepository.delete(center);
+    }
+
+
+    // Gop 2 trung tam
+    @Override
+    public Center mergeCenters(Long centerId1, Long centerId2, Center newCenterInfo) {
+        Optional<Center> center1 = centerRepository.findById(centerId1);
+        Optional<Center> center2 = centerRepository.findById(centerId2);
+
+        if(center1.isPresent() && center2.isPresent()) {
+            Center newCenter = new Center();
+            newCenter.setName(newCenterInfo.getName());
+            newCenter.setAddress(newCenterInfo.getAddress());
+            newCenter.setPhoneNumber(newCenterInfo.getPhoneNumber());
+            newCenter.setEmail(newCenterInfo.getEmail());
+            newCenter.setYearEstablished(newCenterInfo.getYearEstablished());
+
+            // luu trung tam moi
+            newCenter = centerRepository.save(newCenter);
+
+            // chuyen Fresher tu trung tam 1 va 2 sang trung tam moi thong qua WorkingHistory
+            List<WorkingHistory> workingHistoriesCenter1 = workingHistoryRepository.findByCenterId(centerId1);
+            List<WorkingHistory> workingHistoriesCenter2 = workingHistoryRepository.findByCenterId(centerId2);
+
+            for(WorkingHistory wh : workingHistoriesCenter1) {
+                wh.setCenter(newCenter);
+                workingHistoryRepository.save(wh);
+            }
+
+            for(WorkingHistory wh : workingHistoriesCenter2) {
+                wh.setCenter(newCenter);
+                workingHistoryRepository.save(wh);
+            }
+
+            // xoa center1 va center2
+            centerRepository.delete(center1.get());
+            centerRepository.delete(center2.get());
+
+            return newCenter;
+        }
+        else {
+            throw new EntityNotFoundException("One or both Centers not found");
+        }
     }
 }
