@@ -1,5 +1,6 @@
 package dev.manage_fresher_app.controller;
 
+import dev.manage_fresher_app.DTO.Response.CenterDTO;
 import dev.manage_fresher_app.entities.Center;
 import dev.manage_fresher_app.exceptions.ResourceNotFoundException;
 import dev.manage_fresher_app.service.CenterService;
@@ -16,7 +17,7 @@ public class CenterController {
     private CenterService centerService;
 
     @GetMapping
-    public List<Center> getAllCenters(){
+    public List<CenterDTO> getAllCenters(){
         return centerService.getAllCenters();
     }
 
@@ -27,7 +28,7 @@ public class CenterController {
     }
 
     @PostMapping
-    public Center createCenter(@RequestBody Center center) {
+    public CenterDTO createCenter(@RequestBody Center center) {
         return centerService.addCenter(center);
     }
 

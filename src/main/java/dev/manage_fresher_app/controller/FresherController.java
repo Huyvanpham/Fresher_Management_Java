@@ -31,6 +31,11 @@ public class FresherController {
         return fresherService.getAllFreshers();
     }
 
+    @GetMapping("/count")
+    public long countAllFreshers(){
+        return fresherService.countAllFreshers();
+    }
+
     //Create Fresher
     @PostMapping
     public Fresher createFresher(@RequestBody Fresher fresher) {

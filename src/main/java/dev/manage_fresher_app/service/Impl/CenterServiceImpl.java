@@ -1,5 +1,6 @@
 package dev.manage_fresher_app.service.Impl;
 
+import dev.manage_fresher_app.DTO.Response.CenterDTO;
 import dev.manage_fresher_app.entities.Center;
 import dev.manage_fresher_app.entities.WorkingHistory;
 import dev.manage_fresher_app.exceptions.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CenterServiceImpl implements CenterService {
@@ -24,8 +26,8 @@ public class CenterServiceImpl implements CenterService {
 
     // hien thi danh sach cac trung tam
     @Override
-    public List<Center> getAllCenters() {
-        return centerRepository.findAll();
+    public List<CenterDTO> getAllCenters() {
+        return centerRepository.findAll().stream().map(CenterDTO::new).collect(Collectors.toList());
     }
 
     // xem thong tin trung tam
@@ -36,8 +38,9 @@ public class CenterServiceImpl implements CenterService {
 
     // them moi trung tam
     @Override
-    public Center addCenter(Center center) {
-        return centerRepository.save(center);
+    public CenterDTO addCenter(Center center) {
+        center.getManagerHistories().forEach(history -> history.setCenter(center));
+        return new CenterDTO(centerRepository.save(center));
     }
 
     // cap nhat thong tin trung tam

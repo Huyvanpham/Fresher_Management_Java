@@ -3,6 +3,7 @@ package dev.manage_fresher_app.service.Impl;
 import dev.manage_fresher_app.DTO.Request.Fresher.ChangePasswordRequest;
 import dev.manage_fresher_app.entities.Account;
 import dev.manage_fresher_app.entities.Fresher;
+import dev.manage_fresher_app.exceptions.ResourceNotFoundException;
 import dev.manage_fresher_app.repositories.AccountRepository;
 import dev.manage_fresher_app.repositories.FresherRepository;
 import dev.manage_fresher_app.service.FresherService;
@@ -30,7 +31,7 @@ public class FresherServiceImpl implements FresherService {
     // show Fresher by Id
     @Override
     public Fresher getFresherById(Long id) {
-        return fresherRepository.findById(id).orElseThrow(() -> new RuntimeException("Fresher not found with id " + id));
+        return fresherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Fresher not found with id " + id));
     }
 
     // show list Fresher
@@ -79,6 +80,7 @@ public class FresherServiceImpl implements FresherService {
 
     @Override
     public void changePassword(ChangePasswordRequest changePasswordRequest) throws Exception {
+        //Todo: Thêm Chức nàng security
         // lấy thông tin người dùng hiện tại
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
@@ -98,6 +100,11 @@ public class FresherServiceImpl implements FresherService {
         // Đổi mật khẩu
         account.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
         accountRepository.save(account);
+    }
+
+    @Override
+    public long countAllFreshers() {
+        return fresherRepository.count();
     }
 
 

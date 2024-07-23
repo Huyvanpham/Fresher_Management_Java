@@ -19,4 +19,5 @@ public interface FresherService {
     List<Fresher> searchFreshers(String name, String email, String courseName);
 
     void changePassword(ChangePasswordRequest changePasswordRequest) throws Exception;
+    long countAllFreshers();
 }

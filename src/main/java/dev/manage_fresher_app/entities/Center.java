@@ -27,7 +27,7 @@ public class Center {
     @JoinColumn(name = "market_id")
     private Market market;
 
-    @OneToMany(mappedBy = "center")
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private List<ManageHistory> managerHistories;
 
 
