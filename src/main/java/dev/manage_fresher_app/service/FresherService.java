@@ -20,4 +20,6 @@ public interface FresherService {
 
     void changePassword(ChangePasswordRequest changePasswordRequest) throws Exception;
     long countAllFreshers();
+    Fresher moveFresherToNewCenter(Long fresherId, Long newCenterId);
+    void caculateAndSaveExerciseResult(Long fresherId, Long exerciseId, double score, String feedback);
 }

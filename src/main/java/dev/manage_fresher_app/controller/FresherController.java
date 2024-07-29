@@ -74,4 +74,18 @@ public class FresherController {
         }
     }
 
+    // di chuyen fresher
+    @PostMapping("/{fresherId}/move-to-center/{newCenterId}")
+    public ResponseEntity<Fresher> moveFresherToNewCenter(
+            @PathVariable Long fresherId, @PathVariable Long newCenterId){
+        Fresher updatedFresher = fresherService.moveFresherToNewCenter(fresherId,newCenterId);
+        return ResponseEntity.ok(updatedFresher);
+    }
+
+    // tinh diem cho fresher
+    @PostMapping("/setExerciseResult")
+    public void setExerciseResult(@RequestParam Long fresherId, @RequestParam Long exerciseId, @RequestParam Double score, @RequestParam String feedback) {
+        fresherService.setExerciseResult(fresherId, exerciseId, score, feedback);
+    }
+
 }
