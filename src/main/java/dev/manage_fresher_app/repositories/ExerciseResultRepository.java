@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ExerciseResultRepository extends JpaRepository<ExerciseResultRepository, Long> {
+public interface ExerciseResultRepository extends JpaRepository<ExerciseResult, Long> {
     List<ExerciseResult> findByFresher(Fresher fresher);
 }

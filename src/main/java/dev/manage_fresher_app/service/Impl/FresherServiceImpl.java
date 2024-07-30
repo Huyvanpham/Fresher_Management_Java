@@ -1,21 +1,20 @@
 package dev.manage_fresher_app.service.Impl;
 
 import dev.manage_fresher_app.DTO.Request.Fresher.ChangePasswordRequest;
+import dev.manage_fresher_app.DTO.Response.Fresher.FresherScoreStatisticsDTO;
+import dev.manage_fresher_app.DTO.Response.Fresher.FresherStatisticsDTO;
 import dev.manage_fresher_app.entities.*;
 import dev.manage_fresher_app.exceptions.ResourceNotFoundException;
 import dev.manage_fresher_app.repositories.*;
 import dev.manage_fresher_app.service.FresherService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.net.Authenticator;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -55,7 +54,7 @@ public class FresherServiceImpl implements FresherService {
 
     // Create Fresher
     @Override
-    public Fresher createFresher(Fresher fresher){
+    public Fresher createFresher(Fresher fresher) {
         return fresherRepository.save(fresher);
     }
 
@@ -63,7 +62,7 @@ public class FresherServiceImpl implements FresherService {
     @Override
     public Fresher updateFresher(Long id, Fresher fresherDetails) {
         Fresher fresher = fresherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fresher not found with id "+ id));
+                .orElseThrow(() -> new RuntimeException("Fresher not found with id " + id));
 
         fresher.setStatus(fresherDetails.getStatus());
 
@@ -82,13 +81,13 @@ public class FresherServiceImpl implements FresherService {
     @Override
     public void deleteFresher(Long id) {
         Fresher fresher = fresherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fresher not found with id "+ id));
+                .orElseThrow(() -> new RuntimeException("Fresher not found with id " + id));
         fresherRepository.delete(fresher);
     }
 
     @Override
     public List<Fresher> searchFreshers(String name, String email, String courseName) {
-        return fresherRepository.searchFreshers(name,email,courseName);
+        return fresherRepository.searchFreshers(name, email, courseName);
     }
 
     @Override
@@ -101,12 +100,12 @@ public class FresherServiceImpl implements FresherService {
                 .orElseThrow(() -> new Exception("User not found"));
 
         // kiểm tra mật khẩu hiện tại
-        if(!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(),account.getPassword())){
+        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), account.getPassword())) {
             throw new Exception("Current password is incorrect");
         }
 
         // kiểm tra mật khẩu xác nhận
-        if(!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
             throw new Exception("New password and confirmation password do not match");
         }
 
@@ -125,14 +124,14 @@ public class FresherServiceImpl implements FresherService {
     @Override
     public Fresher moveFresherToNewCenter(Long fresherId, Long newCenterId) {
         Fresher fresher = fresherRepository.findById(fresherId)
-                .orElseThrow(()-> new ResourceNotFoundException("Fresher not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fresher not found"));
         Center newCenter = centerRepository.findById(newCenterId)
-                .orElseThrow(()-> new ResourceNotFoundException("center not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("center not found"));
 
         //  ket thuc lich su lam viec hien tai
-        WorkingHistory currentWorkingHistory = workingHistoryRepository.findByFresherAndStatus(fresher,"active")
-                .orElseThrow(()-> new ResourceNotFoundException("Active working history not found"));
-        currentWorkingHistory.setEndTime(new Date());
+        WorkingHistory currentWorkingHistory = workingHistoryRepository.findByFresherAndStatus(fresher, "active")
+                .orElseThrow(() -> new ResourceNotFoundException("Active working history not found"));
+        currentWorkingHistory.setEndTime(new Date(new java.util.Date().getTime()));
         currentWorkingHistory.setStatus("inactive");
         workingHistoryRepository.save(currentWorkingHistory);
 
@@ -140,7 +139,7 @@ public class FresherServiceImpl implements FresherService {
         WorkingHistory newWorkingHistory = new WorkingHistory();
         newWorkingHistory.setFresher(fresher);
         newWorkingHistory.setCenter(newCenter);
-        newWorkingHistory.setStartTime(new Date());
+        newWorkingHistory.setStartTime(new Date(new java.util.Date().getTime()));
         newWorkingHistory.setStatus("active");
 
         workingHistoryRepository.save(newWorkingHistory);
@@ -169,5 +168,47 @@ public class FresherServiceImpl implements FresherService {
         fresherRepository.save(fresher);
     }
 
+    // thong ke so luong fresher theo trung tam
+    @Override
+    public List<FresherStatisticsDTO> getFresherStatisticsByCenter(java.util.Date startDate, java.util.Date endDate) {
+        return workingHistoryRepository.findFresherStatisticsByCenter(startDate, endDate);
+    }
 
+    // thong ke so lương fresher theo diem so
+    @Override
+    public List<FresherScoreStatisticsDTO> getFresherStatisticsByScore() {
+        return workingHistoryRepository.findFresherStatisticsByScore();
+    }
+
+    @Transactional
+    @Override
+    public List<ExerciseResult> addExerciseResults(Long fresherId, List<ExerciseResult> exerciseResults) {
+        Fresher fresher = fresherRepository.findById(fresherId).orElseThrow(() -> new RuntimeException("Fresher not found"));
+
+        if(exerciseResults.isEmpty())
+            throw new RuntimeException("Kết quả làm bài không được trống");
+
+        for (ExerciseResult result : exerciseResults) {
+            WorkingHistory workingHistory = workingHistoryRepository.findById(result.getHistory().getId())
+                    .orElseThrow(() -> new RuntimeException("WorkingHistory not found"));
+
+            Exercise exercise = exerciseRepository.findById(result.getExercise().getId()).orElseThrow(() -> new RuntimeException("Bài tập không tồn tại"));
+
+            result.setFresher(fresher);
+            result.setExercise(exercise);
+            result.setScore(result.getScore());
+            result.setFeedback(result.getFeedback());
+            result.setHistory(workingHistory);
+        }
+        double avgScore = exerciseResults.stream().mapToDouble(ExerciseResult::getScore).average().orElse(0.0);
+        fresher.setAvgScore(avgScore);
+        fresherRepository.save(fresher);
+        List<ExerciseResult> resultSaved = exerciseResultRepository.saveAll(exerciseResults);
+        resultSaved.forEach(result -> {
+            result.getExercise().setExerciseResults(null);
+            result.setHistory(null);
+            result.setFresher(null);
+        });
+        return resultSaved;
+    }
 }

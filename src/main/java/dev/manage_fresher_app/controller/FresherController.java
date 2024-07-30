@@ -1,16 +1,21 @@
 package dev.manage_fresher_app.controller;
 
 import dev.manage_fresher_app.DTO.Request.Fresher.ChangePasswordRequest;
+import dev.manage_fresher_app.DTO.Response.Fresher.FresherScoreStatisticsDTO;
+import dev.manage_fresher_app.DTO.Response.Fresher.FresherStatisticsDTO;
+import dev.manage_fresher_app.entities.ExerciseResult;
 import dev.manage_fresher_app.entities.Fresher;
 import dev.manage_fresher_app.service.FresherService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -83,9 +88,23 @@ public class FresherController {
     }
 
     // tinh diem cho fresher
-    @PostMapping("/setExerciseResult")
-    public void setExerciseResult(@RequestParam Long fresherId, @RequestParam Long exerciseId, @RequestParam Double score, @RequestParam String feedback) {
-        fresherService.setExerciseResult(fresherId, exerciseId, score, feedback);
+    @PostMapping("{fresherId}/exercise-results")
+    public List<ExerciseResult> addExerciseResults( @PathVariable Long fresherId, @RequestBody List<ExerciseResult> exerciseResults) {
+        return fresherService.addExerciseResults(fresherId, exerciseResults);
+    }
+
+    //thong ke so luong fresher theo tung trung tam
+    @GetMapping("/statistics")
+    public List<FresherStatisticsDTO> getFresherStatisticsByCenter(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+        return fresherService.getFresherStatisticsByCenter(startDate, endDate);
+    }
+
+    //thong ke so luong fresher theo diem
+    @GetMapping("/statistics/score")
+    public List<FresherScoreStatisticsDTO> getFresherStatisticsByScore() {
+        return fresherService.getFresherStatisticsByScore();
     }
 
 }
