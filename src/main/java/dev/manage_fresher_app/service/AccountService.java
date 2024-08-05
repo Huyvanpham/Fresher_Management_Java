@@ -14,5 +14,5 @@ import java.util.Optional;
 
 @Service
 public interface AccountService {
-    Account login(LoginRequest loginRequest);
+    String login(LoginRequest loginRequest);
 }
